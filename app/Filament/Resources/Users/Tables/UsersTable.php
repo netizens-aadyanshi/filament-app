@@ -30,6 +30,7 @@ class UsersTable
                 TextColumn::make('address')->label('Saved Addresses'),
                 TextColumn::make('ban_reason')->label('Ban Reason'),
                 TextColumn::make('preferences')->label('Add Preferences'),
+                TextColumn::make('label_color')->label('Label Color'),
 
 
             ])

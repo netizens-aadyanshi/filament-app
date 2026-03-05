@@ -31,6 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'address',
         'ban_reason',
         'preferences',
+        'label_color',
 
     ];
 

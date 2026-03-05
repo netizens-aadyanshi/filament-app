@@ -18,6 +18,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\ToggleButtons;
 
 
 class UserForm
@@ -123,8 +125,21 @@ class UserForm
                     ->minLength(10)
                     ->maxLength(500),
                 KeyValue::make('preferences')->label('User Prefernces')->keyLabel('Setting')->valueLabel('Value')->reorderable()->addButtonLabel('Add Preference'),
-
-
+                ColorPicker::make('label_color')->label('Label Color')->rgba(),
+                ToggleButtons::make('status')
+                ->options([
+                    'active' => 'Success',
+                    'suspended' => 'Warning',
+                    'banned' => 'Danger',
+                ])->colors([
+                    'active' => 'Success',
+                    'suspended' => 'Warning',
+                    'banned' => 'Danger',
+                ])->icons([
+                    'active' => 'heroicon-o-check',
+                    'suspended' => 'heroicon-o-pause',
+                    'banned' => 'heroicon-o-no-symbol'
+                ])->inline(),
 
             ]);
     }
