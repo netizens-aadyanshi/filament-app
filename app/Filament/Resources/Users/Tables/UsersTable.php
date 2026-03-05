@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ImageColumn;
 
 class UsersTable
 {
@@ -15,6 +16,7 @@ class UsersTable
         return $table
             ->columns([
                 //
+                ImageColumn::make('profile_photo')->label('Profile Photo')->circular(),
                 TextColumn::make('name')->sortable(),
                 TextColumn::make('email')->sortable(),
                 TextColumn::make('phone_number')->label('Phone Number')->sortable(),
@@ -22,7 +24,9 @@ class UsersTable
                 TextColumn::make('email_verified_at')->label('Email Verified'),
                 TextColumn::make('interests'),
                 TextColumn::make('status'),
-                TextColumn::make('profile_photo')->label('Profile Photo'),
+                TextColumn::make('bio'),
+                TextColumn::make('notes')->label('Internal Notes'),
+
             ])
             ->filters([
                 //
