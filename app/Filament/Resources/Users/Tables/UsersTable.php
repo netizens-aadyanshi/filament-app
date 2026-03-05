@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn\json_decode;
 
 class UsersTable
 {
@@ -26,6 +27,7 @@ class UsersTable
                 TextColumn::make('status'),
                 TextColumn::make('bio'),
                 TextColumn::make('notes')->label('Internal Notes'),
+                TextColumn::make('address')->label('Saved Addresses'),
 
             ])
             ->filters([

@@ -13,6 +13,8 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\components\TagsInput;
 
 use Filament\Schemas\Schema;
 
@@ -48,15 +50,15 @@ class UserForm
                     $record->email_verified_at = $state ? now() : null;
                     $record->save();
                 }),
-                CheckboxList::make('interests')
-                    ->label('Interests')
-                    ->options([
-                        'electronics' => 'Electronics',
-                        'clothing' => 'Clothing',
-                        'books' => 'Books',
-                        'food' => 'Food',
-                        'technology' => 'Technology'
-                    ])->columns(2)->searchable()->bulkToggleable(true),
+                // CheckboxList::make('interests')
+                //     ->label('Interests')
+                //     ->options([
+                //         'electronics' => 'Electronics',
+                //         'clothing' => 'Clothing',
+                //         'books' => 'Books',
+                //         'food' => 'Food',
+                //         'technology' => 'Technology'
+                //     ])->columns(2)->searchable()->bulkToggleable(true),
                 Radio::make('status')
                     ->label('Account Status')
                     ->options([
@@ -81,6 +83,29 @@ class UserForm
                         'link',
                     ]),
                     MarkdownEditor::make('notes')->label('Internal Notes'),
+                    Repeater::make('address')->label('Saved Addresses')->schema([
+                        TextInput::make('label')->placeholder('Home|Work|Other')->required(),
+                        TextInput::make('street')->label('Street')->required(),
+                        TextInput::make('city')->label('City')->required(),
+                        Select::make('type')->label('Address Type')->options([
+                           'residential' => 'Residential',
+                           'commercial' => 'Commercial',
+                        ])->required(),
+                    ])->minItems(0)->maxItems(3)->collapsible()->cloneable(),
+                    TagsInput::make('interests')
+                    ->label('Interests')
+                    ->suggestions([
+                        'Electronics',
+                        'Clothing',
+                        'Books',
+                        'Food',
+                        'Technology',
+                        'Gaming',
+                        'Travel'
+                    ])
+                    ->separator(',')
+                    ->placeholder('Add an interest...')
+                    ->reorderable()
             ]);
     }
 }
