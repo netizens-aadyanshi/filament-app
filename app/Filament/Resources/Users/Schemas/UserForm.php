@@ -20,6 +20,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Components\Slider;
 
 
 class UserForm
@@ -140,6 +141,9 @@ class UserForm
                     'suspended' => 'heroicon-o-pause',
                     'banned' => 'heroicon-o-no-symbol'
                 ])->inline(),
+                Slider::make('trust_score1')
+                    ->range(minValue: 0, maxValue: 100,)->step(5)
+                    ->pipsValues([0,  25,  50,  75,  100]),
 
             ]);
     }
