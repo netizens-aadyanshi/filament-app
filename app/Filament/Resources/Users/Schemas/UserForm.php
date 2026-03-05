@@ -5,6 +5,9 @@ namespace App\Filament\Resources\Users\Schemas;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Toggle;
+use Illuminate\Support\Carbon;
+use Filament\Forms\Components\Hidden;
 
 
 use Filament\Schemas\Schema;
@@ -28,7 +31,19 @@ class UserForm
                 Checkbox::make('agree_to_terms')
                     ->label('I agree to the terms and conditions')
                     ->required()
-                    ->dehydrated(false)
+                    ->dehydrated(false),
+
+                Toggle::make('is_email_verified')
+                ->label('Mark Email as Verified')
+                ->inlineLabel()
+                ->dehydrated(false)
+                ->afterStateHydrated(function ($component, $record) {
+                    $component->state($record?->email_verified_at !== null);
+                })
+                ->afterStateUpdated(function ($state, $record) {
+                    $record->email_verified_at = $state ? now() : null;
+                    $record->save();
+                }),
             ]);
     }
 }
