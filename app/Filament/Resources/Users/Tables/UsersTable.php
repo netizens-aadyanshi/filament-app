@@ -21,6 +21,7 @@ class UsersTable
                 TextColumn::make('role'),
                 TextColumn::make('email_verified_at')->label('Email Verified'),
                 TextColumn::make('interests'),
+                TextColumn::make('status'),
             ])
             ->filters([
                 //

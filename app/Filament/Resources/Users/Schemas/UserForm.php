@@ -7,6 +7,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\descriptions;
 
 
 use Filament\Schemas\Schema;
@@ -52,6 +54,18 @@ class UserForm
                         'food' => 'Food',
                         'technology' => 'Technology'
                     ])->columns(2)->searchable()->bulkToggleable(true),
+                Radio::make('status')
+                    ->label('Account Status')
+                    ->options([
+                        'active' => 'Active',
+                        'suspended' => 'Suspended',
+                        'banned' => 'Banned',
+                    ])->descriptions([
+                        'active' => 'User can log in normally',
+                        'suspended' => 'Temporary restriction',
+                        'banned' => 'Permanent restriction',
+                    ])
+                    ->default('active')->inline(),
             ]);
     }
 }
