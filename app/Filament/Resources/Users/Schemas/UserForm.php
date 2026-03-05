@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+
 
 
 use Filament\Schemas\Schema;
@@ -17,8 +19,12 @@ class UserForm
                 TextInput::make('name')->label('Full Name')->required()->maxLength(255),
                 TextInput::make('email')->email()->required()->unique(ignoreRecord: true),
                 TextInput::make('password')->password()->dehydrated(fn ($state) => filled($state))->required(fn(string $operation) => $operation === 'create')->minLength(8),
-                TextInput::make('phone')->label('Phone Number')->tel()->mask('(999) 999-9999')->placeholder('(999) 999-9999'),
-
+                TextInput::make('phone_number')->label('Phone Number')->tel()->mask('(999) 999-9999')->placeholder('(999) 999-9999'),
+                Select::make('role')->options([
+                    'admin' => 'Admin',
+                    'customer' => 'Customer',
+                // ])->default('customer')->required()->searchable()->native(false)->multiple(true),
+                ])->default('customer')->required()->searchable()->native(false),
             ]);
     }
 }

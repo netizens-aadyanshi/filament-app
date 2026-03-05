@@ -15,8 +15,10 @@ class UsersTable
         return $table
             ->columns([
                 //
-                TextColumn::make('name')->sortable()->searchable(),
-                TextColumn::make('email')->sortable()->searchable(),
+                TextColumn::make('name')->sortable(),
+                TextColumn::make('email')->sortable(),
+                TextColumn::make('phone_number')->label('Phone Number')->sortable(),
+                TextColumn::make('role'),
 
             ])
             ->filters([
