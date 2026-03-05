@@ -28,6 +28,9 @@ class UsersTable
                 TextColumn::make('bio'),
                 TextColumn::make('notes')->label('Internal Notes'),
                 TextColumn::make('address')->label('Saved Addresses'),
+                TextColumn::make('ban_reason')->label('Ban Reason'),
+                TextColumn::make('preferences')->label('Add Preferences'),
+
 
             ])
             ->filters([
