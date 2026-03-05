@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
-
+use Filament\Forms\Components\Checkbox;
 
 
 use Filament\Schemas\Schema;
@@ -25,6 +25,10 @@ class UserForm
                     'customer' => 'Customer',
                 // ])->default('customer')->required()->searchable()->native(false)->multiple(true),
                 ])->default('customer')->required()->searchable()->native(false),
+                Checkbox::make('agree_to_terms')
+                    ->label('I agree to the terms and conditions')
+                    ->required()
+                    ->dehydrated(false)
             ]);
     }
 }
