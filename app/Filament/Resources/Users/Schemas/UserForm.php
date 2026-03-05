@@ -9,7 +9,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\descriptions;
-
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 
 use Filament\Schemas\Schema;
 
@@ -66,6 +67,9 @@ class UserForm
                         'banned' => 'Permanent restriction',
                     ])
                     ->default('active')->inline(),
+                    DateTimePicker::make('email_verified_at')->label('Email Verified At')
+                    ->displayFormat('d M Y H:i A')->minDate(now()->subYear(1))->maxDate(now())->native(false)->seconds(false),
+                    FileUpload::make('profile_photo')->label('Profile Photo')->image()->imageEditor()->imagePreviewHeight(100)->circleCropper()->maxSize(1024),
             ]);
     }
 }

@@ -22,6 +22,7 @@ class UsersTable
                 TextColumn::make('email_verified_at')->label('Email Verified'),
                 TextColumn::make('interests'),
                 TextColumn::make('status'),
+                TextColumn::make('profile_photo')->label('Profile Photo'),
             ])
             ->filters([
                 //
