@@ -6,8 +6,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Toggle;
-use Illuminate\Support\Carbon;
-use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\CheckboxList;
 
 
 use Filament\Schemas\Schema;
@@ -44,6 +43,15 @@ class UserForm
                     $record->email_verified_at = $state ? now() : null;
                     $record->save();
                 }),
+                CheckboxList::make('interests')
+                    ->label('Interests')
+                    ->options([
+                        'electronics' => 'Electronics',
+                        'clothing' => 'Clothing',
+                        'books' => 'Books',
+                        'food' => 'Food',
+                        'technology' => 'Technology'
+                    ])->columns(2)->searchable()->bulkToggleable(true),
             ]);
     }
 }

@@ -19,7 +19,8 @@ class UsersTable
                 TextColumn::make('email')->sortable(),
                 TextColumn::make('phone_number')->label('Phone Number')->sortable(),
                 TextColumn::make('role'),
-
+                TextColumn::make('email_verified_at')->label('Email Verified'),
+                TextColumn::make('interests'),
             ])
             ->filters([
                 //
