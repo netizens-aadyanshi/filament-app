@@ -6,6 +6,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Role;
+use App\Status;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -59,6 +61,8 @@ class User extends Authenticatable implements MustVerifyEmail
             'address' => 'array',
             'interests' => 'array',
             'preferences' => 'array',
+            'role' => Role::class,
+            'status' => Status::class,
 
         ];
     }
