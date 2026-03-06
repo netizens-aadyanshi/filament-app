@@ -3,29 +3,19 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use App\Models\User;
-use Filament\Schemas\Schema;
-use Filament\Infolists\Components\TextEntry;
-use App\Role;
 use App\Status;
+use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Forms\Components\Slider;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Support\Enums\TextSize;
+use Filament\Schemas\Schema;
+
 // use Filament\Tables\Columns\Layout\Split;
 // use Filament\Tables\Columns\Layout\Stack;
-use Filament\Tables\Columns\ColumnGroup;
 // USE THESE - They are for Infolists/View Pages!
-use Filament\Infolists\Components\Split;
-use Filament\Infolists\Components\Stack;
-use Filament\Support\Enums\FontWeight;
-
 
 class UsersInfolist
 {
@@ -51,8 +41,9 @@ class UsersInfolist
                         ImageEntry::make('profile_photo')
                             ->label('')
                             ->circular()
+                            ->imageHeight(80)
                             ->imageWidth(80)
-                            ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?background=random&name=' . urlencode($record->name)),
+                            ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?background=random&name='.urlencode($record->name)),
                     ])
                     ->collapsible(),
                 Section::make('Account')
@@ -60,16 +51,16 @@ class UsersInfolist
                         TextEntry::make('role')->badge(),
                         TextEntry::make('status')->badge(),
                         TextEntry::make('created_at')->label('Member Since')
-                        ->dateTime('d M Y ')
-                        ->placeholder('Not verified'),
+                            ->dateTime('d M Y ')
+                            ->placeholder('Not verified'),
                         TextEntry::make('ban_reason')
-                        ->visible(fn (User $record): bool => $record->status === Status::Banned),
+                            ->visible(fn (User $record): bool => $record->status === Status::Banned),
                         IconEntry::make('email_verified_at')
-                        ->label('Email Verified')
+                            ->label('Email Verified')
                             ->getStateUsing(fn ($record): bool => filled($record->email_verified_at))
-                                ->boolean()
-                                ->trueIcon('heroicon-o-check-badge')
-                                ->falseIcon('heroicon-o-x-circle'),
+                            ->boolean()
+                            ->trueIcon('heroicon-o-check-badge')
+                            ->falseIcon('heroicon-o-x-circle'),
 
                     ])
                     ->collapsible()
@@ -85,18 +76,17 @@ class UsersInfolist
                 Section::make('Saved Addresses')
                     ->schema([
                         RepeatableEntry::make('address')->label('Saved Address')
-                        ->schema([
-                            TextEntry::make('label'),
-                            TextEntry::make('street'),
-                            TextEntry::make('city'),
-                            TextEntry::make('type')
+                            ->schema([
+                                TextEntry::make('label'),
+                                TextEntry::make('street'),
+                                TextEntry::make('city'),
+                                TextEntry::make('type'),
 
-                        ])
-                        ->columns(2)
+                            ])
+                            ->columns(2),
 
                     ])
                     ->collapsible(),
-
 
             ]);
     }

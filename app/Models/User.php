@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Role;
+use App\Status;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Role;
-use App\Status;
 
 class User extends Authenticatable implements MustVerifyEmail
 {

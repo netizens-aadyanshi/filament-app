@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-                $table->text('bio')->nullable();
+            $table->text('bio')->nullable();
         });
     }
 
@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-                $table->dropColumn('bio');
+            $table->dropColumn('bio');
         });
     }
 };
