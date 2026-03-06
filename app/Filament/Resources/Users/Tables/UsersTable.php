@@ -21,7 +21,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\DatePicker;
 use Filament\Actions\DeleteAction;
 use App\Models\User;
+use Filament\Actions\ExportBulkAction;
 use Filament\Forms\Components\Textarea;
+use Illuminate\Database\Eloquent\Collection;
+use Filament\Tables\Grouping\Group;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use App\Filament\Exports\UserExporter;
 
 
 class UsersTable
@@ -46,8 +51,8 @@ class UsersTable
                     ->boolean()
                     ->trueIcon('heroicon-o-check-badge')
                     ->falseIcon('heroicon-o-x-circle')
-                    ->trueColor('success') // Green
-                    ->falseColor('danger')  // Red
+                    ->trueColor('success')
+                    ->falseColor('danger')
                     ->alignCenter(),
                 TextColumn::make('created_at')->label('Registered')->dateTime('d M Y')->sortable()->toggleable(isToggledHiddenByDefault: true),
 
@@ -89,6 +94,17 @@ class UsersTable
                                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
                             );
                     }),
+            ])->defaultSort('created_at', 'desc')->striped()
+            ->paginated([10, 25, 50])
+            ->poll('60s')
+            ->emptyStateHeading('No Users Found')
+            ->emptyStateDescription('Try adjusting your filters or search terms to find what you are looking for.')
+            ->emptyStateIcon('heroicon-o-users')
+            ->filtersFormColumns(2)
+            ->groups([
+                Group::make('role')
+                    ->label('Role')
+                    ->collapsible(),
             ])
             ->recordActions([
                 EditAction::make()->slideOver(),
@@ -143,24 +159,40 @@ class UsersTable
                     })
                     ->successNotificationTitle("Banned the User"),
                     DeleteAction::make()
-                    // 1. Disable the button if the record is the currently logged-in user
                     ->disabled(fn ($record) => $record->id === auth()->id())
-
-                    // 2. Add a dynamic tooltip to explain why the button is greyed out
                     ->tooltip(function ($record) {
                         if ($record->id === auth()->id()) {
                             return 'You cannot delete your own account';
                         }
-                        return 'Delete this user'; // Optional: Tooltip for other rows
+                        return 'Delete this user';
                     })
-
-                    // Customizing the modal for extra safety on other rows
                     ->modalHeading('Confirm Deletion')
                     ->modalDescription('This will permanently remove the user from the database. This action is irreversible.'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make('delete_selected_safe')
+                        ->label('Delete selected (Safe)')
+                        ->icon('heroicon-m-shield-check')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalHeading('Safe Delete')
+                        ->modalDescription('Selected users will be deleted. Your own account will be skipped automatically.')
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (Collection $records) {
+                        $recordsToDelete = $records->reject(fn ($record) => $record->id === auth()->id());
+
+                        $recordsToDelete->each->delete();
+                    })->successNotificationTitle("Deleted the Bulk User"),
+
+                    ExportBulkAction::make()
+                    ->label('Export CSV')
+                    ->label('Export CSV')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->exporter(UserExporter::class)
+                    ->formats([
+                        ExportFormat::Csv,
+                    ])
                 ]),
             ]);
     }
