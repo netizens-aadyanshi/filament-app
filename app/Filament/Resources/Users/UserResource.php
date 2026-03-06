@@ -15,7 +15,9 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Filament\Forms\Components\TextInput;
-use App\Filament\Resources\Users\Infolists\UsersInfolist;
+use App\Filament\Resources\Users\Schemas\UsersInfolist;
+use Filament\Infolists;
+
 
 class UserResource extends Resource
 {
@@ -25,9 +27,9 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(Schema $schema): Schema
     {
-        return UsersInfolist::configure($infolist);
+        return UsersInfolist::configure($schema);
     }
 
     public static function form(Schema $schema): Schema
