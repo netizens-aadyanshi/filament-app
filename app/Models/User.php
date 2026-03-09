@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Role;
 use App\Status;
+use App\Models\Post;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -37,6 +38,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'trust_score1',
 
     ];
+
+    public function posts() {
+        return $this->hasMany(Post::class);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
