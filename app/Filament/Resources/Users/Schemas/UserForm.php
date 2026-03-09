@@ -4,30 +4,28 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Slider;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\ToggleButtons;
-use Filament\Forms\Components\Slider;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Tables\Columns\Layout\Split;
-
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 
 class UserForm
 {
@@ -52,38 +50,36 @@ class UserForm
                             // ])->default('customer')->required()->searchable()->native(false)->multiple(true),
                         ])->default('customer')->required()->searchable()->native(false),
                         Toggle::make('is_email_verified')
-                        ->label('Mark Email as Verified')
-                        ->inlineLabel()
-                        ->dehydrated(false)
-                        ->afterStateHydrated(function ($component, $record) {
-                            $component->state($record?->email_verified_at !== null);
-                        })
-                        ->afterStateUpdated(function ($state, $record) {
-                            $record->email_verified_at = $state ? now() : null;
-                            $record->save();
-                        }),
+                            ->label('Mark Email as Verified')
+                            ->inlineLabel()
+                            ->dehydrated(false)
+                            ->afterStateHydrated(function ($component, $record) {
+                                $component->state($record?->email_verified_at !== null);
+                            })
+                            ->afterStateUpdated(function ($state, $record) {
+                                $record->email_verified_at = $state ? now() : null;
+                                $record->save();
+                            }),
                         ToggleButtons::make('status')
-                        ->options([
-                            'active' => 'Success',
-                            'suspended' => 'Warning',
-                            'banned' => 'Danger',
-                        ])->colors([
+                            ->options([
+                                'active' => 'Success',
+                                'suspended' => 'Warning',
+                                'banned' => 'Danger',
+                            ])->colors([
                             'active' => 'Success',
                             'suspended' => 'Warning',
                             'banned' => 'Danger',
                         ])->icons([
                             'active' => 'heroicon-o-check',
                             'suspended' => 'heroicon-o-pause',
-                            'banned' => 'heroicon-o-no-symbol'
+                            'banned' => 'heroicon-o-no-symbol',
                         ])->inline(),
                     ])->collapsed(),
-
 
                 Checkbox::make('agree_to_terms')
                     ->label('I agree to the terms and conditions')
                     ->required()
                     ->dehydrated(false),
-
 
                 // CheckboxList::make('interests')
                 //     ->label('Interests')
@@ -102,10 +98,10 @@ class UserForm
                         '!@md' => 2,
                         '!@xl' => 3,
                     ])->schema([
-                    DateTimePicker::make('email_verified_at')->label('Email Verified At')
-                    ->displayFormat('d M Y H:i A')->minDate(now()->subYear(1))->maxDate(now())->native(false)->seconds(false),
-                    FileUpload::make('profile_photo')->label('Profile Photo')->image()->imageEditor()->imagePreviewHeight(100)->circleCropper()->maxSize(1024),
-                ]),
+                        DateTimePicker::make('email_verified_at')->label('Email Verified At')
+                            ->displayFormat('d M Y H:i A')->minDate(now()->subYear(1))->maxDate(now())->native(false)->seconds(false),
+                        FileUpload::make('profile_photo')->label('Profile Photo')->image()->imageEditor()->imagePreviewHeight(100)->circleCropper()->maxSize(1024),
+                    ]),
 
                 Tabs::make('Tabs')
                     ->tabs([
@@ -138,7 +134,7 @@ class UserForm
                                     ->live()
                                     ->default('active')
                                     ->inline(),
-                            ])
+                            ]),
                     ]),
 
                 Section::make('Preferences & Settings')
@@ -161,7 +157,7 @@ class UserForm
                         ColorPicker::make('label_color')->label('Label Color')->rgba(),
 
                         Slider::make('trust_score1')
-                            ->range(minValue: 0, maxValue: 100,)->step(5)
+                            ->range(minValue: 0, maxValue: 100)->step(5)
                             ->pipsValues([0,  25,  50,  75,  100]),
 
                     ]),
@@ -169,20 +165,20 @@ class UserForm
                 Tabs::make('Tabs')
                     ->tabs([
                         Tab::make('bio')
-                        ->schema([
-                            RichEditor::make('bio')->label('Biography')->toolbarButtons([
-                                'bold',
-                                'italic',
-                                'underline',
-                                'bulletList',
-                                'orderedList',
-                                'link',
+                            ->schema([
+                                RichEditor::make('bio')->label('Biography')->toolbarButtons([
+                                    'bold',
+                                    'italic',
+                                    'underline',
+                                    'bulletList',
+                                    'orderedList',
+                                    'link',
+                                ]),
                             ]),
-                        ]),
                         Tab::make('notes')
-                        ->schema([
-                            MarkdownEditor::make('notes')->label('Internal Notes'),
-                        ])
+                            ->schema([
+                                MarkdownEditor::make('notes')->label('Internal Notes'),
+                            ]),
                     ]),
 
                 Fieldset::make('Restriction Details')
@@ -193,17 +189,16 @@ class UserForm
                     ])
                     ->schema([
                         Textarea::make('ban_reason')
-                        ->label('Ban Reason')
-                        ->nullable()
-                        ->rows(4)
-                        ->cols(20)
-                        ->live()
-                        ->visible(fn (Get $get) => $get('status') == 'banned')
-                        ->minLength(10)
-                        ->maxLength(500),
+                            ->label('Ban Reason')
+                            ->nullable()
+                            ->rows(4)
+                            ->cols(20)
+                            ->live()
+                            ->visible(fn (Get $get) => $get('status') == 'banned')
+                            ->minLength(10)
+                            ->maxLength(500),
 
                     ]),
-
 
             ]);
     }
