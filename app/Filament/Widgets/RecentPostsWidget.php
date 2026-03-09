@@ -13,6 +13,8 @@ class RecentPostsWidget extends TableWidget
 {
     protected int|string|array $columnSpan = 'full';
 
+    protected static ?int $sort = 4;
+
     public function table(Table $table): Table
     {
         return $table

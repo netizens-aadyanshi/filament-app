@@ -14,6 +14,8 @@ class PostActivityChart extends ChartWidget
 
     protected int|string|array $columnSpan = 1;
 
+    protected static ?int $sort = 2;
+
     public ?string $filter = '7';
 
     protected function getType(): string

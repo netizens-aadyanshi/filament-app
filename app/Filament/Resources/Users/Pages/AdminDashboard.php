@@ -8,7 +8,7 @@ use App\Filament\Widgets\StatsOverviewWidget;
 use App\Filament\Widgets\UserRegistrationChart;
 use Filament\Pages\Dashboard as BaseDashboard;
 
-class Dashboard extends BaseDashboard
+class AdminDashboard extends BaseDashboard
 {
     protected function getHeaderWidgets(): array
     {

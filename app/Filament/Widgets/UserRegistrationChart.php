@@ -14,6 +14,8 @@ class UserRegistrationChart extends ChartWidget
 
     public ?string $filter = '7';
 
+    protected static ?int $sort = 3;
+
     protected int|string|array $columnSpan = 2;
 
     protected function getData(): array
