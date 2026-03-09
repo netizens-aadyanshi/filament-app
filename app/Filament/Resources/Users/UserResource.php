@@ -17,6 +17,7 @@ use Filament\Tables\Table;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Resources\Users\Schemas\UsersInfolist;
 use Filament\Infolists;
+use App\Filament\Resources\Users\RelationManagers\PostsRelationManager;
 
 
 class UserResource extends Resource
@@ -46,6 +47,7 @@ class UserResource extends Resource
     {
         return [
             //
+            PostsRelationManager::class,
         ];
     }
 
@@ -58,4 +60,6 @@ class UserResource extends Resource
             'view' => ViewUser::route('/{record}'),
         ];
     }
+
+
 }
