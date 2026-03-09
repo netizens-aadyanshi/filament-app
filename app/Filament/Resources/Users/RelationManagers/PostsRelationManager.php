@@ -52,7 +52,15 @@ class PostsRelationManager extends RelationManager
                     ])
                     ->default('draft')
                     ->required()
-                    ->live(),
+                    ->live()
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        // ✅ Updates form VISUALLY immediately
+                        if ($state !== 'published') {
+                            $set('published_at', null);
+                        } else {
+                            $set('published_at', $get('published_at') ?? now());
+                        }
+                    }),
 
                 DateTimePicker::make('published_at')->label('Date Published')->visible(fn (Get $get): bool => $get('status') === 'published'),
 
@@ -128,25 +136,37 @@ class PostsRelationManager extends RelationManager
 
             ])
             ->recordActions([
-                        EditAction::make(),
-                        DissociateAction::make(),
-                        DeleteAction::make(),
-                        ForceDeleteAction::make(),
-                        RestoreAction::make(),
-                        ViewAction::make(),
-                    ])
+                EditAction::make()
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['user_id'] = $this->getOwnerRecord()->id;
+
+                        if ($data['status'] !== 'published') {
+                            $data['published_at'] = null;
+                        }
+
+                        // ✅ Add any other mutations here
+                        // $data['updated_by'] = auth()->id();
+
+                        return $data;
+                    }),
+                DissociateAction::make(),
+                DeleteAction::make(),
+                ForceDeleteAction::make(),
+                RestoreAction::make(),
+                ViewAction::make(),
+            ])
             ->toolbarActions([
-                        BulkActionGroup::make([
-                            DissociateBulkAction::make(),
-                            DeleteBulkAction::make(),
-                            ForceDeleteBulkAction::make(),
-                            RestoreBulkAction::make(),
-                        ]),
-                    ])
+                BulkActionGroup::make([
+                    DissociateBulkAction::make(),
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                ]),
+            ])
             ->modifyQueryUsing(fn (Builder $query) => $query
-                        ->withoutGlobalScopes([
-                            SoftDeletingScope::class,
-                        ]));
+                ->withoutGlobalScopes([
+                    SoftDeletingScope::class,
+                ]));
     }
 
     public function infolist(Schema $schema): Schema
