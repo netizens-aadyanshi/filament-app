@@ -121,12 +121,17 @@ class UsersTable
             ->emptyStateHeading('No Users Found')
             ->emptyStateDescription('Try adjusting your filters or search terms to find what you are looking for.')
             ->emptyStateIcon('heroicon-o-users')
+            ->reorderable('order_column')
+            ->defaultSort('order_column')
             ->filtersFormColumns(2)
             ->groups([
                 Group::make('role')
                     ->label('Role')
+                    ->collapsible(), Group::make('status')
+                    ->label('Status')
                     ->collapsible(),
             ])
+            ->defaultGroup('role')
             ->recordActions([
                 EditAction::make()->slideOver(),
                 ViewAction::make(),
@@ -213,8 +218,8 @@ class UsersTable
                         ->icon('heroicon-o-arrow-down-tray')
                         ->exporter(UserExporter::class)
                         ->formats([
-                                ExportFormat::Csv,
-                            ]),
+                            ExportFormat::Csv,
+                        ]),
                 ]),
             ]);
     }
