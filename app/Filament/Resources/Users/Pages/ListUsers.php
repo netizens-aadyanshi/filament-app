@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources\Users\Pages;
 
+use App\Filament\Exports\UserExporter;
 use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
-use App\Filament\Exports\UserExporter;
 use Filament\Actions\ExportAction;
+use Filament\Resources\Pages\ListRecords;
 
 class ListUsers extends ListRecords
 {
@@ -17,8 +17,7 @@ class ListUsers extends ListRecords
         return [
             CreateAction::make(),
 
-
-              ExportAction::make()
+            ExportAction::make()
                 ->label('Export')
                 ->icon('heroicon-o-arrow-down-tray')
                 ->exporter(UserExporter::class),

@@ -2,32 +2,33 @@
 
 namespace App\Filament\Resources\Users\Tables;
 
+use App\Filament\Exports\UserExporter;
+use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportBulkAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Table;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn\json_decode;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Textarea;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Actions\Action;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Summarizers\Average;
+use Filament\Tables\Columns\Summarizers\Count;
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
-use Filament\Tables\Filters\Filter;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Forms\Components\DatePicker;
-use Filament\Actions\DeleteAction;
-use App\Models\User;
-use Filament\Actions\ExportBulkAction;
-use Filament\Forms\Components\Textarea;
-use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Grouping\Group;
-use Filament\Actions\Exports\Enums\ExportFormat;
-use App\Filament\Exports\UserExporter;
-
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class UsersTable
 {
@@ -37,10 +38,11 @@ class UsersTable
             ->columns([
                 //
                 ImageColumn::make('profile_photo')->label('Profile Photo')->circular()->imageHeight(40)
-                ->defaultImageUrl(function ($record) {
-                        return 'https://ui-avatars.com/api/?background=random&name=' . urlencode($record->name);
+                    ->defaultImageUrl(function ($record) {
+                        return 'https://ui-avatars.com/api/?background=random&name='.urlencode($record->name);
                     }),
-                TextColumn::make('name')->sortable()->searchable()->copyable()->copyMessage('Name copied!!')->weight(FontWeight::SemiBold),
+                TextColumn::make('name')->sortable()->searchable()->copyable()->copyMessage('Name copied!!')->weight(FontWeight::SemiBold)
+                    ->summarize(Count::make()->label('Total Users')),
                 TextColumn::make('email')->sortable()->searchable()->copyable()->icon(Heroicon::Envelope),
                 TextColumn::make('phone_number')->label('Phone Number')->sortable(),
                 TextColumn::make('role')->badge(),
@@ -64,7 +66,26 @@ class UsersTable
                 TextColumn::make('ban_reason')->label('Ban Reason'),
                 TextColumn::make('preferences')->label('Add Preferences'),
                 TextColumn::make('label_color')->label('Label Color'),
-
+                TextColumn::make('posts_count')
+                    ->counts('posts as posts_count')
+                    ->sortable()
+                    ->badge()
+                    ->color('gray')
+                    ->summarize(
+                        Sum::make()
+                            ->label('Total Posts')
+                    ),
+                TextColumn::make('published_posts_count')
+                    ->counts('posts as published_posts_count', fn ($query) => $query->where('status', 'published'))
+                    ->sortable()
+                    ->badge()
+                    ->color('success')
+                    ->summarize([
+                        Sum::make()
+                            ->label('Total Published Posts'),
+                        Average::make()
+                            ->label('Avg Published'),
+                    ]),
 
             ])
             ->filters([
@@ -119,7 +140,7 @@ class UsersTable
                         $record->email_verified_at = now();
                         $record->save();
                     })
-                    ->successNotificationTitle("Email Verififed Successfully"),
+                    ->successNotificationTitle('Email Verififed Successfully'),
                 Action::make('Suspend Account')
                     ->label('Suspend')
                     ->icon('heroicon-m-exclamation-triangle')
@@ -129,11 +150,11 @@ class UsersTable
                     ->modalHeading('Suspend Account')
                     ->modalDescription(fn (User $record) => "Are you sure you want to suspend {$record->name}?")
                     ->action(function (User $record) {
-                            $record->update([
+                        $record->update([
                             'status' => 'suspended',
                         ]);
                     })
-                    ->successNotificationTitle("Suspended the User"),
+                    ->successNotificationTitle('Suspended the User'),
                 Action::make('Ban Account')
                     ->label('Ban')
                     ->icon('heroicon-m-no-symbol')
@@ -157,13 +178,14 @@ class UsersTable
                             'ban_reason' => $data['ban_reason'],
                         ]);
                     })
-                    ->successNotificationTitle("Banned the User"),
-                    DeleteAction::make()
+                    ->successNotificationTitle('Banned the User'),
+                DeleteAction::make()
                     ->disabled(fn ($record) => $record->id === auth()->id())
                     ->tooltip(function ($record) {
                         if ($record->id === auth()->id()) {
                             return 'You cannot delete your own account';
                         }
+
                         return 'Delete this user';
                     })
                     ->modalHeading('Confirm Deletion')
@@ -180,19 +202,19 @@ class UsersTable
                         ->modalDescription('Selected users will be deleted. Your own account will be skipped automatically.')
                         ->deselectRecordsAfterCompletion()
                         ->action(function (Collection $records) {
-                        $recordsToDelete = $records->reject(fn ($record) => $record->id === auth()->id());
+                            $recordsToDelete = $records->reject(fn ($record) => $record->id === auth()->id());
 
-                        $recordsToDelete->each->delete();
-                    })->successNotificationTitle("Deleted the Bulk User"),
+                            $recordsToDelete->each->delete();
+                        })->successNotificationTitle('Deleted the Bulk User'),
 
                     ExportBulkAction::make()
-                    ->label('Export CSV')
-                    ->label('Export CSV')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->exporter(UserExporter::class)
-                    ->formats([
-                        ExportFormat::Csv,
-                    ])
+                        ->label('Export CSV')
+                        ->label('Export CSV')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->exporter(UserExporter::class)
+                        ->formats([
+                                ExportFormat::Csv,
+                            ]),
                 ]),
             ]);
     }
